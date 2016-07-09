@@ -26,14 +26,12 @@ class LeafNode: public Node
 public:
     Node* Next;
     vector<string> Value;
-//    void InsertKey(int, string);
 };
 
 class In_Node:public Node
 {
 public:
     vector<Node*> Children;
-//    void InsertKey(int);
 };
 
 #endif /* Node_hpp */
