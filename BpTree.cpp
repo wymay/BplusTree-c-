@@ -36,26 +36,73 @@ void BpTree::insert(int key, string value)
             cout<<"You cannot insert duplicate keys!"<<endl;
             return;
         }
-        else if(t->Keys[i]>key){
-            if((t->Keys.size()+1)<=this->n){
-                t->Keys.insert(t->Keys.begin() + i, key);
-                ((LeafNode*)t)->Value.insert(((LeafNode*)t)->Value.begin() + i, value);
-            }
-            else{
-                //split the leaf node
-                Node* tnew = new LeafNode();
-                for(i=0;i<t->Keys.size();++i){
-                    tnew->Keys[i]=t->Keys[ceil(n/2)+i];
-                    ((LeafNode*)tnew)->Value[i]=((LeafNode*)t)->Value[ceil(n/2)+i];
-                }
-                t->Keys.erase(t->Keys.begin()+ceil(n/2), t->Keys.begin()+t->Keys.size()-1);
-                ((LeafNode*)t)->Value.erase(((LeafNode*)t)->Value.begin()+ceil(n/2), ((LeafNode*)t)->Value.begin()+((LeafNode*)t)->Value.size()-1);
-                ((LeafNode*)tnew)->Next=((LeafNode*)t)->Next;
-                ((LeafNode*)t)->Next=tnew;
-                
-                
-            }
+        else if(key>t->Keys.back()){
+            t->Keys.push_back(key);
+            ((LeafNode*)t)->Value.push_back(value);
         }
+        else if(t->Keys[i]>key){
+            
+            t->Keys.insert(t->Keys.begin() + i, key);
+            ((LeafNode*)t)->Value.insert(((LeafNode*)t)->Value.begin() + i, value);
+        }
+            
+        if(t->Keys.size()>this->n){
+            //split the leaf node
+            Node* tnew = new Node();
+            for(i=0;i+ceil(n/2)<t->Keys.size();++i){
+                tnew->Keys[i]=t->Keys[ceil(n/2)+i];
+                ((LeafNode*)tnew)->Value[i]=((LeafNode*)t)->Value[ceil(n/2)+i];
+            }
+            t->Keys.erase(t->Keys.begin()+ceil(n/2), t->Keys.end());
+            ((LeafNode*)t)->Value.erase(((LeafNode*)t)->Value.begin()+ceil(n/2), ((LeafNode*)t)->Value.end());
+            ((LeafNode*)tnew)->Next=((LeafNode*)t)->Next;
+                ((LeafNode*)t)->Next=tnew;
+            key = t->Keys[ceil(n/2)-1];
+            while(t->Parent!=NULL){
+                t=t->Parent;
+                for(i=0;i<t->Keys.size();++i){
+                    if(key>t->Keys.back()){
+                        t->Keys.push_back(key);
+                        ((In_Node*)t)->Children[t->Keys.size()]=tnew;
+                    }
+                    else if(t->Keys[i]>key){
+                        t->Keys.insert(t->Keys.begin() + i, key);
+                        ((In_Node*)t)->Children.insert(((In_Node*)t)->Children.begin()+i+1, tnew);
+                    }
+                    if(t->Keys.size()>this->n){
+                        Node* nright = new In_Node();
+                        for(i=0;i+floor((n+1)/2)<t->Keys.size();++i){
+                            nright->Keys[i]=t->Keys[floor((n+1)/2)+i];
+                            ((In_Node*)nright)->Children[i]=((In_Node*)t)->Children[floor((n+1)/2)+i];
+                        }
+                        ((In_Node*)nright)->Children[i]=((In_Node*)t)->Children[floor((n+1)/2)+i];
+                        tnew->Parent = nright;
+                        key = t->Keys[floor((n+1)/2)-1];
+                        t->Keys.erase(t->Keys.begin()+floor((n+1)/2)-1, t->Keys.end());
+                        ((In_Node*)t)->Children.erase(((In_Node*)t)->Children.begin()+floor((n+1)/2), ((In_Node*)t)->Children.end());
+                        tnew = nright;
+                    }
+                    else{
+                        tnew->Parent = t;
+                        return;
+                    }
+                }
+                    
+            }
+            if(t->Parent==NULL){
+                t->Parent = new Node();
+                ((In_Node*)t->Parent)->Children[0]=t;
+                ((In_Node*)t->Parent)->Children[1]=tnew;
+                ((In_Node*)t->Parent)->Keys[0]=t->Keys.back();
+                tnew->Parent=t->Parent;
+                head = t->Parent;
+            }
+                
+        }
+        else{
+            return;
+        }
+        
     }
     
 }
