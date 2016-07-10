@@ -51,6 +51,7 @@ void BpTree::insert(int key, string value)
     if(t->Keys.size()>this->n){
         //split the leaf node
         Node* tnew = new LeafNode();
+        tnew->Parent = t->Parent;
         tnew->Keys.insert(tnew->Keys.begin(), t->Keys.begin()+ceil(n/2), t->Keys.end());
         ((LeafNode*)tnew)->Value.insert(((LeafNode*)tnew)->Value.begin(), ((LeafNode*)t)->Value.begin()+ceil(n/2), ((LeafNode*)t)->Value.end());
         t->Keys.erase(t->Keys.begin()+ceil(n/2), t->Keys.end());
@@ -63,7 +64,7 @@ void BpTree::insert(int key, string value)
             for(int i=0;i<t->Keys.size();++i){
                 if(key>t->Keys.back()){
                     t->Keys.push_back(key);
-                    ((In_Node*)t)->Children[t->Keys.size()]=tnew;
+                    ((In_Node*)t)->Children.push_back(tnew);
                     break;
                 }
                 else if(t->Keys[i]>key){
@@ -74,9 +75,12 @@ void BpTree::insert(int key, string value)
             }
             if(t->Keys.size()>this->n){
                 Node* nright = new In_Node();
+                nright->Parent = t->Parent;
                 nright->Keys.insert(nright->Keys.begin(), t->Keys.begin()+floor((n+1)/2), t->Keys.end());
                 ((In_Node*)nright)->Children.insert(((In_Node*)nright)->Children.begin(), ((In_Node*)t)->Children.begin()+floor((n+1)/2), ((In_Node*)t)->Children.end());
-                tnew->Parent = nright;
+                for(int i=floor((n+1)/2);i<t->Keys.size();++i){
+                    ((In_Node*)t)->Children[i]->Parent = nright;
+                }
                 key = t->Keys[floor((n+1)/2)-1];
                 t->Keys.erase(t->Keys.begin()+floor((n+1)/2)-1, t->Keys.end());
                 ((In_Node*)t)->Children.erase(((In_Node*)t)->Children.begin()+floor((n+1)/2), ((In_Node*)t)->Children.end());
