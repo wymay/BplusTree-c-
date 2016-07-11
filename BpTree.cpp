@@ -94,11 +94,10 @@ void BpTree::insert(int key, string value)
                 
         }
         if(t->Parent==NULL){
-            t->Parent = new Node();
-            ((In_Node*)t->Parent)->Children[0]=t;
-            ((In_Node*)t->Parent)->Children[1]=tnew;
-            ((In_Node*)t->Parent)->Keys[0]=t->Keys.back();
-            tnew->Parent=t->Parent;
+            t->Parent = new In_Node();
+            ((In_Node*)t->Parent)->Children.insert(((In_Node*)t->Parent)->Children.begin(), t);
+            ((In_Node*)t->Parent)->Children.insert(((In_Node*)t->Parent)->Children.begin()+1,tnew);
+            (t->Parent)->Keys.insert((t->Parent)->Keys.begin(),t->Keys.back());
             head = t->Parent;
         }
             
@@ -109,7 +108,88 @@ void BpTree::insert(int key, string value)
     
 }
 
-void BpTree:: printKeys()
-{
+
+/////////////////////////////////////////////////////////////////////
+void BpTree:: remove(int key){
     
 }
+/////////////////////////////////////////////////////////////////////
+
+
+string BpTree:: find(int key){
+    Node* t=this->head;
+    while (strcmp(typeid(t).name(),"LeafNode")){ //find the proper location
+        int flag = 0;
+        for (int i=0;i<t->Keys.size();++i){
+            if(t->Keys[i]>key){
+                t = ((In_Node*)t)->Children[i];
+                flag = 1;
+                break;
+            }
+        }
+        if(!flag){
+            t = ((In_Node*)t)->Children[t->Keys.size()];
+        }
+    }
+    for(int i=0;i<t->Keys.size();++i){
+        if(t->Keys[i]==key){
+            return ((LeafNode*)t)->Value[i];
+        }
+    }
+    cout<<"This key does not exist in this B+ tree!"<<endl;
+    return 0;
+}
+
+
+void BpTree:: printKeys()
+{
+    vector<Node*> q;
+    if(head==NULL){
+        cout<<"[]"<<endl;
+        return;
+    }
+    else{
+        q.push_back(head);
+        while(q.size()){
+            unsigned long size = q.size();
+            for(int i=0;i<size;++i){
+                if(!strcmp(typeid(q[i]).name(),"LeafNode")){
+                    for(int j=0;j<((In_Node*)q[i])->Children.size();++j){
+                            q.push_back(((In_Node*)q[i])->Children[j]);
+                    }
+                }
+                cout<<"[";
+                int nk=0;
+                for(nk=0;nk<q[i]->Keys.size()-1;++nk){
+                    cout<<q[i]->Keys[nk]<<",";
+                }
+                cout<<q[i]->Keys[nk]<<"] ";
+            }
+            q.erase(q.begin(),q.begin()+size-1);
+            cout<<endl;
+        }
+    }
+}
+
+
+void BpTree:: printValues()
+{
+    Node* t = this->head;
+    while(strcmp(typeid(t).name(),"LeafNode")){
+        t = ((In_Node*)t)->Children[0];
+    }
+    while(t!=NULL){
+        for(int i=0;i<t->Keys.size();++i){
+            cout<<((LeafNode*)t)->Value[i]<<endl;
+        }
+        t=((LeafNode*)t)->Next;
+    }
+}
+
+BpTree:: ~BpTree()
+{
+    if(this->head){
+        delete this->head;
+    }
+}
+
