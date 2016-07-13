@@ -19,6 +19,7 @@ class Node
 public:
     vector<int> Keys;
     Node* Parent;
+    bool isLeaf;
 };
 
 class LeafNode: public Node
@@ -26,12 +27,14 @@ class LeafNode: public Node
 public:
     Node* Next;
     vector<string> Value;
+    LeafNode(){isLeaf=true; Next=NULL; Parent=NULL; }
 };
 
 class In_Node:public Node
 {
 public:
     vector<Node*> Children;
+    In_Node(){isLeaf=false; Parent=NULL; }
 };
 
 #endif /* Node_hpp */
