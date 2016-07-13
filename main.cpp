@@ -47,47 +47,31 @@ int main(int argc, const char * argv[]) {
 //        }
 //    }
     t.insert(2, "a");
-    t.printKeys();
 
     t.insert(11, "c");
-    t.printKeys();
-    
-    t.insert(13, "h");
-    t.printKeys();
-    
-    t.insert(21, "i");
-    t.printKeys();
-    
-    t.insert(64, "k");
-    t.printKeys();
-    
-    t.insert(4, "b");
-    t.printKeys();
-    
-    t.insert(23, "j");
-    t.printKeys();
-    
-    t.insert(9, "e");
-    t.printKeys();
-    t.insert(19, "f");
-    t.printKeys();
-    t.insert(5, "d");
-    t.printKeys();
 
+    t.insert(13, "h");
+   
+    t.insert(21, "i");
+
+    t.insert(64, "k");
+
+    t.insert(4, "b");
+    t.insert(23, "j");
+    t.insert(9, "e");
+    t.insert(19, "f");
+    t.insert(5, "d");
     t.insert(10, "g");
-    t.printKeys();
-    
     t.insert(6, "g");
-    t.printKeys();
     t.insert(7, "g");
-    t.printKeys();
     t.insert(60, "g");
     t.insert(71, "g");
     t.insert(93, "g");
     t.insert(77, "g");
     t.printKeys();
-    cout<<t.find(71)<<endl;
-    t.insert(77, "z");
+    t.remove(3);
+//    cout<<t.find(71)<<endl;
+//    t.insert(77, "z");
 
     return 0;
 }
