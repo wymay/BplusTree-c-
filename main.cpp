@@ -68,8 +68,10 @@ int main(int argc, const char * argv[]) {
     t.insert(71, "g");
     t.insert(93, "g");
     t.insert(77, "g");
+    t.insert(78, "k");
     t.printKeys();
-    t.remove(3);
+    t.remove(71);
+    t.printKeys();
 //    cout<<t.find(71)<<endl;
 //    t.insert(77, "z");
 
