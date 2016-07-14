@@ -203,6 +203,9 @@ void BpTree:: remove(int key){
             while(t->Parent!=this->head){
                 Rsibling=Lsibling=NULL;
                 t=t->Parent;
+                if(((In_Node*)t)->Children.size()>=floor((n+2)/2)){
+                    return;
+                }
                 int Child_num = -1;
                 for(int i=0;i<((In_Node*)t->Parent)->Children.size();++i){
                     if(((In_Node*)t->Parent)->Children[i]==t){

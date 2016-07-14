@@ -76,6 +76,12 @@ int main(int argc, const char * argv[]) {
     t.printKeys();
     t.remove(4);
     t.printKeys();
+    t.remove(7);
+    t.printKeys();
+    t.remove(5);
+    t.printKeys();
+    t.remove(64);
+    t.printKeys();
     
 //    cout<<t.find(71)<<endl;
 //    t.insert(77, "z");
