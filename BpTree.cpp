@@ -120,7 +120,7 @@ void BpTree:: remove(int key){
     while (!t->isLeaf){ //find the proper location
         int flag = 0;
         for (int i=0;i<t->Keys.size();++i){
-            if(t->Keys[i]>key){
+            if(t->Keys[i]>=key){
                 t = ((In_Node*)t)->Children[i];
                 flag = 1;
                 break;
@@ -145,8 +145,9 @@ void BpTree:: remove(int key){
     }
     if(((LeafNode*)t)->Value.size()<ceil((n+1)/2) && t->Parent!=NULL){
         
-        Node* Rsibling = new LeafNode();
-        Node* Lsibling = new LeafNode();
+        Node* Rsibling;
+        Node* Lsibling;
+        Rsibling=Lsibling=NULL;
         
         int Child_num = -1;
         for(int i=0;i<((In_Node*)t->Parent)->Children.size();++i){
@@ -181,7 +182,7 @@ void BpTree:: remove(int key){
         }
         else {
             if(Rsibling!=NULL && ((LeafNode*)Rsibling)->Value.size()-1<ceil((n+1)/2)){
-                t->Keys.insert(Rsibling->Keys.end(), Rsibling->Keys.begin(), Rsibling->Keys.end());
+                t->Keys.insert(t->Keys.end(), Rsibling->Keys.begin(), Rsibling->Keys.end());
                 ((LeafNode*)t)->Value.insert(((LeafNode*)t)->Value.end(),((LeafNode*)Rsibling)->Value.begin(), ((LeafNode*)Rsibling)->Value.end());
                 ((LeafNode*)t)->Next=((LeafNode*)Rsibling)->Next;
                 
@@ -196,9 +197,11 @@ void BpTree:: remove(int key){
                 
                 t->Parent->Keys.erase(t->Parent->Keys.begin()+Child_num-1);
                 ((In_Node*)t->Parent)->Children.erase(((In_Node*)t->Parent)->Children.begin()+Child_num);
+                t = Lsibling;
             }
             
             while(t->Parent!=this->head){
+                Rsibling=Lsibling=NULL;
                 t=t->Parent;
                 int Child_num = -1;
                 for(int i=0;i<((In_Node*)t->Parent)->Children.size();++i){
@@ -234,21 +237,25 @@ void BpTree:: remove(int key){
                 }
                 else if(Rsibling!=NULL && ((In_Node*)Rsibling)->Children.size()-1<floor((n+2)/2)){
                     ((In_Node*)Rsibling)->Children.insert(((In_Node*)Rsibling)->Children.begin(),((In_Node*)t)->Children.begin(),((In_Node*)t)->Children.end());
+                    Rsibling->Keys.insert(Rsibling->Keys.begin(), t->Parent->Keys[Child_num]);
                     Rsibling->Keys.insert(Rsibling->Keys.begin(), t->Keys.begin(), t->Keys.end());
                     for(int i=0;i<((In_Node*)t)->Children.size();++i){
                         ((In_Node*)t)->Children[i]->Parent=Rsibling;
                     }
                     t->Parent->Keys.erase(t->Parent->Keys.begin()+Child_num);
                     ((In_Node*)t->Parent)->Children.erase(((In_Node*)t->Parent)->Children.begin()+Child_num);
+                    t = Rsibling;
                 }
                 else if(Lsibling!=NULL && ((In_Node*)Lsibling)->Children.size()-1<floor((n+2)/2)){
                     ((In_Node*)Lsibling)->Children.insert(((In_Node*)Lsibling)->Children.end(), ((In_Node*)t)->Children.begin(), ((In_Node*)t)->Children.end());
+                    Lsibling->Keys.insert(Lsibling->Keys.end(), t->Parent->Keys[Child_num-1]);
                     Lsibling->Keys.insert(Lsibling->Keys.end(), t->Keys.begin(), t->Keys.end());
                     for(int i=0;i<((In_Node*)t)->Children.size();++i){
                         ((In_Node*)t)->Children[i]->Parent=Lsibling;
                     }
                     t->Parent->Keys.erase(t->Parent->Keys.begin()+Child_num-1);
                     ((In_Node*)t->Parent)->Children.erase(((In_Node*)t->Parent)->Children.begin()+Child_num);
+                    t = Lsibling;
                 }
             }
             if(t->Parent==this->head && this->head->Keys.size()==0){
@@ -259,7 +266,6 @@ void BpTree:: remove(int key){
         }
         
     }
-    
     
 }
 
